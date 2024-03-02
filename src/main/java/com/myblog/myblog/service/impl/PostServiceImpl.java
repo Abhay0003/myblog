@@ -5,6 +5,7 @@ import com.myblog.myblog.exception.ResourceNotFoundException;
 import com.myblog.myblog.payload.PostDto;
 import com.myblog.myblog.repository.PostRepository;
 import com.myblog.myblog.service.PostService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,16 +19,18 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;
+    private ModelMapper modelMapper;
 
     public PostServiceImpl(PostRepository postRepository) {
+
         this.postRepository = postRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
     public PostDto createPost(PostDto postDto) {
         Post post = mapToEntity(postDto);
-        Post savedPost
-                = postRepository.save(post);
+        Post savedPost = postRepository.save(post);
         PostDto dto = mapToDto(savedPost);
         return dto;
     }
@@ -59,20 +62,19 @@ public class PostServiceImpl implements PostService {
         return dtos;
     }
 
+    @Override
+    public void deletePost(long id) {
+        postRepository.deleteById(id);
+    }
+
     PostDto mapToDto(Post post){
-        PostDto dto = new PostDto();
-        dto.setId(post.getId());
-        dto.setTitle(post.getTitle());
-        dto.setDescription(post.getDescription());
-        dto.setContent(post.getContent());
+        PostDto dto = modelMapper.map(post,PostDto.class);
         return dto;
     }
 
     Post mapToEntity(PostDto postDto){
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getContent());
+        Post post = modelMapper.map(postDto,Post.class);
         return post;
+
     }
 }

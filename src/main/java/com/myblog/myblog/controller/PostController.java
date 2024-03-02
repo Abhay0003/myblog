@@ -24,13 +24,21 @@ public class PostController {
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
+    //http://localhost:8080/api/posts/2
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePost(@PathVariable long id){
+        postService.deletePost(id);
+        return new ResponseEntity<>("Post is deleted",HttpStatus.OK);
+    }
+
     //http://localhost:8080/api/posts/particular?id=1
     @GetMapping("/particular")
     public ResponseEntity<PostDto> getPostById(@RequestParam Long id){
         PostDto dto = postService.getPostById(id);
         return new ResponseEntity<>(dto,HttpStatus.OK);
     }
-    //http://localhost:8080/api/posts?pageNo=0&pageSize=5&sortBy=title&sortDir=desc
+    //
+    
     @GetMapping
     public List<PostDto> getAllPosts(
             @RequestParam( name = "pageNo", required = false, defaultValue = "0" ) int pageNo,
